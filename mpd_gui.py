@@ -1,0 +1,319 @@
+# Interfaccia Gradio per il Sistema RAG Instagram Prompt Generator
+# Due pagine: 1) Caricamento Documenti  2) Generazione Prompt
+
+import gradio as gr
+import os
+from mpd_rag_system import InstagramPromptGenerator
+from mpd_config import Config
+
+class GradioInterface:
+    """
+    Interfaccia utente Gradio per il sistema RAG Instagram
+    """
+
+    def __init__(self, ollama_host=Config.OLLAMA_HOST):
+        self.rag_system = InstagramPromptGenerator(
+            chroma_path=Config.CHROMA_DB_PATH,
+            collection_name=Config.COLLECTION_NAME,
+            embedding_model=Config.EMBEDDING_MODEL,
+            analysis_model=Config.ANALYSIS_MODEL,
+            ollama_host=ollama_host
+        )
+
+    def process_uploaded_file(self, file, post_name):
+        """
+        Processa un file caricato ed estrae il contenuto
+        """
+        if file is None:
+            return "❌ Nessun file selezionato", ""
+
+        try:
+            # Leggi il contenuto del file
+            if hasattr(file, 'name'):
+                filepath = file.name
+            else:
+                filepath = file
+
+            with open(filepath, 'r', encoding='utf-8') as f:
+                content = f.read()
+
+            if not content.strip():
+                return "❌ Il file è vuoto", ""
+
+            # Mostra anteprima del contenuto
+            preview = content[:500] + "..." if len(content) > 500 else content
+            return f"✅ File caricato: {len(content)} caratteri", preview
+
+        except Exception as e:
+            return f"❌ Errore nella lettura del file: {str(e)}", ""
+
+    def add_document_to_db(self, content, post_name):
+        """
+        Aggiunge un documento al database ChromaDB
+        """
+        if not content.strip():
+            return "❌ Contenuto vuoto - inserisci o carica un post Instagram", self.rag_system.get_collection_stats()
+
+        if not post_name.strip():
+            post_name = f"Post_{len(content)//100}"
+
+        result = self.rag_system.add_post_to_database(content, post_name)
+        stats = self.rag_system.get_collection_stats()
+
+        return result, stats
+
+    def generate_prompt(self, product_name, perfumer_name, brand_values, 
+                       product_description, olfactory_pyramid, keywords):
+        """
+        Genera il prompt ottimizzato per LLM commerciale
+        """
+        # Validazione input
+        if not all([product_name.strip(), brand_values.strip(), product_description.strip()]):
+            return "❌ **Errore:** I campi Nome Prodotto, Valori Brand e Descrizione sono obbligatori."
+
+        # Genera il prompt ottimizzato
+        result = self.rag_system.generate_optimized_prompt(
+            product_name=product_name,
+            perfumer_name=perfumer_name or "Non specificato",
+            brand_values=brand_values,
+            product_description=product_description,
+            olfactory_pyramid=olfactory_pyramid or "Da definire",
+            keywords=keywords or ""
+        )
+
+        return result
+
+    def create_interface(self):
+        """
+        Crea l'interfaccia Gradio con due pagine
+        """
+        # Stili CSS personalizzati
+        custom_css = """
+        .main-header { text-align: center; color: #2C3E50; margin: 20px 0; }
+        .section-header { color: #34495E; border-bottom: 2px solid #E74C3C; padding-bottom: 10px; }
+        .success-text { color: #27AE60; font-weight: bold; }
+        .error-text { color: #E74C3C; font-weight: bold; }
+        .info-box { background: #F8F9FA; padding: 15px; border-radius: 8px; margin: 10px 0; }
+        """
+
+        with gr.Blocks(css=custom_css, title="Moellhausen Instagram Prompt Generator") as interface:
+
+            gr.HTML("""
+            <div class="main-header">
+                <h1>🌸 Moellhausen Instagram Prompt Generator</h1>
+                <p><em>Sistema RAG per generare prompt ottimali mantenendo il brand voice</em></p>
+            </div>
+            """)
+
+            # === PAGINA 1: CARICAMENTO DOCUMENTI ===
+            with gr.Tab("📚 Caricamento Documenti"):
+                gr.HTML('<h2 class="section-header">📚 Gestione Database Post Instagram</h2>')
+
+                gr.HTML("""
+                <div class="info-box">
+                    <strong>📋 Istruzioni:</strong><br>
+                    1. Carica i post Instagram esistenti uno alla volta<br>
+                    2. I post devono essere in formato testo/markdown<br>
+                    3. Ogni post verrà indicizzato nel database per l'analisi del brand voice<br>
+                    4. Almeno 3-5 post sono consigliati per risultati ottimali
+                </div>
+                """)
+
+                with gr.Row():
+                    with gr.Column(scale=2):
+                        gr.HTML('<h3>📄 Caricamento File</h3>')
+
+                        file_upload = gr.File(
+                            label="Seleziona file post Instagram (.txt, .md)", 
+                            file_types=[".txt", ".md"],
+                            file_count="single"
+                        )
+
+                        post_name_input = gr.Textbox(
+                            label="Nome del Post (opzionale)",
+                            placeholder="es: King_Narmar_Nilafar",
+                            lines=1
+                        )
+
+                        file_status = gr.Textbox(
+                            label="Status File", 
+                            interactive=False,
+                            lines=2
+                        )
+
+                    with gr.Column(scale=3):
+                        gr.HTML('<h3>👁️ Anteprima Contenuto</h3>')
+
+                        content_preview = gr.Textbox(
+                            label="Anteprima del contenuto caricato",
+                            lines=10,
+                            interactive=False
+                        )
+
+                        content_manual = gr.Textbox(
+                            label="Oppure incolla il contenuto manualmente",
+                            lines=10,
+                            placeholder="Incolla qui il testo del post Instagram..."
+                        )
+
+                with gr.Row():
+                    add_button = gr.Button("➕ Aggiungi al Database", variant="primary", size="large")
+                    clear_button = gr.Button("🗑️ Pulisci Campi", variant="secondary")
+
+                with gr.Row():
+                    with gr.Column():
+                        add_status = gr.Textbox(
+                            label="Risultato Aggiunta", 
+                            interactive=False,
+                            lines=2
+                        )
+
+                    with gr.Column():
+                        db_stats = gr.Textbox(
+                            label="Statistiche Database",
+                            interactive=False, 
+                            lines=4,
+                            value=self.rag_system.get_collection_stats()
+                        )
+
+                # Eventi pagina 1
+                file_upload.change(
+                    fn=self.process_uploaded_file,
+                    inputs=[file_upload, post_name_input],
+                    outputs=[file_status, content_preview]
+                )
+
+                add_button.click(
+                    fn=self.add_document_to_db,
+                    inputs=[content_manual, post_name_input],
+                    outputs=[add_status, db_stats]
+                )
+
+                clear_button.click(
+                    fn=lambda: ("", "", "", ""),
+                    outputs=[content_manual, post_name_input, file_status, content_preview]
+                )
+
+            # === PAGINA 2: GENERAZIONE PROMPT ===
+            with gr.Tab("✨ Generazione Prompt"):
+                gr.HTML('<h2 class="section-header">✨ Generatore Prompt Ottimizzato</h2>')
+
+                gr.HTML("""
+                <div class="info-box">
+                    <strong>🎯 Funzionalità:</strong><br>
+                    Inserisci i dettagli del nuovo prodotto e ottieni un prompt perfetto per LLM commerciali 
+                    (GPT-4, Claude, etc.) che genererà un post Instagram nel perfetto stile Moellhausen.
+                </div>
+                """)
+
+                with gr.Row():
+                    with gr.Column():
+                        gr.HTML('<h3>🏷️ Informazioni Prodotto</h3>')
+
+                        product_name = gr.Textbox(
+                            label="Nome Prodotto *",
+                            placeholder="es: GOLDEN SUNSET BY AURORA",
+                            lines=1
+                        )
+
+                        perfumer_name = gr.Textbox(
+                            label="Nome Profumiere",
+                            placeholder="es: Anna Chiara Di Trolio",
+                            lines=1
+                        )
+
+                        brand_values = gr.Textbox(
+                            label="Valori Brand da Evidenziare *", 
+                            placeholder="es: craftsmanship, scientific precision, contemporary luxury",
+                            lines=2
+                        )
+
+                        keywords = gr.Textbox(
+                            label="Parole Chiave Obbligatorie",
+                            placeholder="es: eleganza, raffinatezza, unicità",
+                            lines=2
+                        )
+
+                    with gr.Column():
+                        gr.HTML('<h3>🌺 Descrizione Prodotto</h3>')
+
+                        product_description = gr.Textbox(
+                            label="Descrizione Grezza del Profumo *",
+                            placeholder="Descrivi il profumo, l'ispirazione, la storia...",
+                            lines=6
+                        )
+
+                        olfactory_pyramid = gr.Textbox(
+                            label="Piramide Olfattiva",
+                            placeholder="Top: ... \nHeart: ... \nBase: ...",
+                            lines=4
+                        )
+
+                generate_button = gr.Button("🚀 Genera Prompt Ottimizzato", variant="primary", size="large")
+
+                gr.HTML('<h3>📋 Prompt Generato</h3>')
+                prompt_output = gr.Textbox(
+                    label="Prompt ottimizzato per LLM commerciale",
+                    lines=20,
+                    interactive=True,  # Permette di copiare facilmente
+                    show_copy_button=True
+                )
+
+                # Eventi pagina 2
+                generate_button.click(
+                    fn=self.generate_prompt,
+                    inputs=[product_name, perfumer_name, brand_values, 
+                           product_description, olfactory_pyramid, keywords],
+                    outputs=prompt_output
+                )
+
+            # Footer
+            gr.HTML("""
+            <div style="text-align: center; margin-top: 30px; padding: 20px; border-top: 1px solid #ddd;">
+                <p><em>🤖 Powered by Ollama + ChromaDB + Gradio | Made for Moellhausen</em></p>
+            </div>
+            """)
+
+        return interface
+
+def launch_app(ollama_host="http://localhost:11434", share=False, port=7860):
+    """
+    Lancia l'applicazione Gradio
+    """
+    try:
+        print("🚀 Inizializzazione Instagram Prompt Generator...")
+        print(f"📡 Host Ollama: {ollama_host}")
+
+        # Crea l'interfaccia
+        app = GradioInterface(ollama_host=ollama_host)
+        interface = app.create_interface()
+
+        print("✅ Interfaccia creata con successo!")
+        print(f"🌐 Avvio server su porta {port}...")
+
+        # Lancia l'interfaccia
+        interface.launch(
+            share=share,
+            server_port=port,
+            server_name="0.0.0.0" if share else "127.0.0.1",
+            show_api=False
+        )
+
+    except Exception as e:
+        print(f"❌ Errore nell'avvio dell'applicazione: {str(e)}")
+        print("\n🔧 Verifica che:")
+        print("1. Ollama sia in esecuzione")
+        print("2. Il modello llama3.1 sia disponibile") 
+        print("3. Tutte le dipendenze siano installate")
+
+if __name__ == "__main__":
+    # Configurazione predefinita - modifica secondo necessità
+    OLLAMA_HOST = Config.OLLAMA_HOST
+    PORT = Config.GRADIO_PORT
+    SHARE = Config.GRADIO_SHARE
+
+    launch_app(
+        ollama_host=OLLAMA_HOST,
+        share=SHARE, 
+        port=PORT
+    )
