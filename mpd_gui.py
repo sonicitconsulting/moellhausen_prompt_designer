@@ -25,7 +25,7 @@ class GradioInterface:
         Processa un file caricato ed estrae il contenuto
         """
         if file is None:
-            return "❌ Nessun file selezionato", ""
+            return "❌ Nessun file selezionato", "", ""
 
         try:
             # Leggi il contenuto del file
@@ -38,11 +38,11 @@ class GradioInterface:
                 content = f.read()
 
             if not content.strip():
-                return "❌ Il file è vuoto", ""
+                return "❌ Il file è vuoto", "", ""
 
             # Mostra anteprima del contenuto
             preview = content[:500] + "..." if len(content) > 500 else content
-            return f"✅ File caricato: {len(content)} caratteri", preview
+            return f"✅ File caricato: {len(content)} caratteri", preview, content
 
         except Exception as e:
             return f"❌ Errore nella lettura del file: {str(e)}", ""
@@ -82,6 +82,10 @@ class GradioInterface:
         )
 
         return result
+
+    def on_file_upload(self, file, post_name):
+        status, preview, full_content = self.process_uploaded_file(file, post_name)
+        return status, preview, full_content  # Il campo manuale ora riceve il testo INTEGRALE
 
     def create_interface(self):
         """
@@ -178,9 +182,9 @@ class GradioInterface:
 
                 # Eventi pagina 1
                 file_upload.change(
-                    fn=self.process_uploaded_file,
+                    fn=self.on_file_upload,
                     inputs=[file_upload, post_name_input],
-                    outputs=[file_status, content_preview]
+                    outputs=[file_status, content_preview, content_manual]
                 )
 
                 add_button.click(
@@ -190,8 +194,8 @@ class GradioInterface:
                 )
 
                 clear_button.click(
-                    fn=lambda: ("", "", "", ""),
-                    outputs=[content_manual, post_name_input, file_status, content_preview]
+                    fn=lambda: ("", "", "", "", None, ""),
+                    outputs=[content_manual, post_name_input, file_status, content_preview, file_upload, add_status]
                 )
 
             # === PAGINA 2: GENERAZIONE PROMPT ===

@@ -10,7 +10,7 @@ class Config:
 
     # === CONFIGURAZIONE OLLAMA ===
     # Host del server Ollama (modifica se usi un server remoto)
-    OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://services.sonicitconsulting.it:10000")
+    OLLAMA_HOST = os.getenv("OLLAMA_HOST", "https://services.sonicitconsulting.it:10000")
 
     # Modello per l'embedding dei documenti
     EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "toshk0/nomic-embed-text-v2-moe:Q6_K")

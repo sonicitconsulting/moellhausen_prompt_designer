@@ -11,6 +11,8 @@ import re
 from datetime import datetime
 import pandas as pd
 
+from chromadb.utils.embedding_functions import OllamaEmbeddingFunction
+
 from  mpd_config import Config
 
 class InstagramPromptGenerator:
@@ -37,21 +39,25 @@ class InstagramPromptGenerator:
         if ollama_host != "http://localhost:11434":
             os.environ['OLLAMA_HOST'] = ollama_host
 
+        embedding_func = OllamaEmbeddingFunction(
+            model_name=Config.EMBEDDING_MODEL,
+            url=Config.OLLAMA_HOST
+        )
+
         # Inizializza ChromaDB
         os.makedirs(chroma_path, exist_ok=True)
         self.chroma_client = chromadb.PersistentClient(path=chroma_path)
 
         # Crea o ottieni la collection
         try:
-            self.collection = self.chroma_client.get_collection(
-                name=collection_name
+            self.collection = self.chroma_client.get_or_create_collection(
+                name=self.collection_name,
+                embedding_function=embedding_func
             )
-            print(f"Collection '{collection_name}' caricata con successo")
-        except:
-            self.collection = self.chroma_client.create_collection(
-                name=collection_name
-            )
-            print(f"Collection '{collection_name}' creata con successo")
+            print(f"Collection '{self.collection_name}' pronta con embedding via Ollama.\nModel: {Config.EMBEDDING_MODEL}")
+        except Exception as e:
+            print(f"Errore nella creazione/recupero collection: {e}")
+            raise
 
     def extract_post_structure(self, post_text: str) -> Dict[str, str]:
         """
