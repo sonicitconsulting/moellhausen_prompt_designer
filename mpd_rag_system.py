@@ -34,6 +34,7 @@ class InstagramPromptGenerator:
         self.collection_name = collection_name
         self.embedding_model = embedding_model
         self.analysis_model = analysis_model
+        self.ollama_host = ollama_host
 
         # Configura client Ollama (per server remoto)
         if ollama_host != "http://localhost:11434":
@@ -233,7 +234,8 @@ POST DA ANALIZZARE:
 Rispondi in italiano con un'analisi dettagliata e strutturata, focalizzandoti sui pattern che si ripetono e che caratterizzano il brand."""
 
         try:
-            response = ollama.generate(
+            client = ollama.Client(host=self.ollama_host)
+            response = client.generate(
                 model=self.analysis_model,
                 prompt=analysis_prompt,
                 options={'temperature': 0.3}
@@ -308,7 +310,8 @@ Il prompt deve essere autosufficiente e includere:
 
 Genera SOLO il prompt ottimizzato, pronto per essere copiato e usato direttamente con un LLM commerciale."""
 
-            response = ollama.generate(
+            client = ollama.Client(host=self.ollama_host)
+            response = client.generate(
                 model=self.analysis_model,
                 prompt=prompt_generation,
                 options={'temperature': 0.4, 'num_predict': 2000}
