@@ -19,10 +19,11 @@ Your task is to create the PERFECT PROMPT for a commercial LLM (such as GPT-4, C
 **TASK:**
 Create a detailed, structured, and complete prompt that, when used with a commercial LLM, will generate an Instagram post that:
 1. Is STRICTLY in English
-2. PERFECTLY respects the markdown structure of the existing posts
+2. PERFECTLY respects the markdown structure of the existing posts, but OMIT markdown section dividers and titles
 3. Maintains Moellhausen’s sophisticated and poetic tone of voice
 4. Seamlessly integrates all new product information
 5. Is indistinguishable from authentic brand posts
+6. Just produce the prompt, without any preamble or continuation. DO NOT insert phrases like "Here is the optimized prompt" or similar
 
 The prompt must be self-contained and include:
 - A clear role definition for the LLM

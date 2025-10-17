@@ -42,17 +42,17 @@ class GradioInterface:
 
             # Mostra anteprima del contenuto
             preview = content[:500] + "..." if len(content) > 500 else content
-            return f"✅ File caricato: {len(content)} caratteri", preview, content
+            return f"✅ File loaded: {len(content)} characters", preview, content
 
         except Exception as e:
-            return f"❌ Errore nella lettura del file: {str(e)}", ""
+            return f"❌ Errore loading file: {str(e)}", ""
 
     def add_document_to_db(self, content, post_name):
         """
         Aggiunge un documento al database ChromaDB
         """
         if not content.strip():
-            return "❌ Contenuto vuoto - inserisci o carica un post Instagram", self.rag_system.get_collection_stats()
+            return "❌ Empty file - Type or load an Instagram post", self.rag_system.get_collection_stats()
 
         if not post_name.strip():
             post_name = f"Post_{len(content)//100}"
@@ -69,7 +69,7 @@ class GradioInterface:
         """
         # Validazione input
         if not all([product_name.strip(), brand_values.strip(), product_description.strip()]):
-            return "❌ **Errore:** I campi Nome Prodotto, Valori Brand e Descrizione sono obbligatori."
+            return "❌ **Error:** Product Name, Brand Values and Description are mandatory"
 
         # Genera il prompt ottimizzato
         result = self.rag_system.generate_optimized_prompt(
@@ -274,7 +274,7 @@ class GradioInterface:
             # Footer
             gr.HTML("""
             <div style="text-align: center; margin-top: 30px; padding: 20px; border-top: 1px solid #ddd;">
-                <p><em>🤖 Powered by Ollama + ChromaDB + Gradio | Made for Moellhausen</em></p>
+                <p><em>🤖 Powered by SoNicITConsulting | Made for Moellhausen</em></p>
             </div>
             """)
 
