@@ -25,7 +25,7 @@ class GradioInterface:
         Processa un file caricato ed estrae il contenuto
         """
         if file is None:
-            return "❌ Nessun file selezionato", "", ""
+            return "❌ No file selected", "", ""
 
         try:
             # Leggi il contenuto del file
@@ -38,7 +38,7 @@ class GradioInterface:
                 content = f.read()
 
             if not content.strip():
-                return "❌ Il file è vuoto", "", ""
+                return "❌ File is empty", "", ""
 
             # Mostra anteprima del contenuto
             preview = content[:500] + "..." if len(content) > 500 else content
@@ -74,10 +74,10 @@ class GradioInterface:
         # Genera il prompt ottimizzato
         result = self.rag_system.generate_optimized_prompt(
             product_name=product_name,
-            perfumer_name=perfumer_name or "Non specificato",
+            perfumer_name=perfumer_name or "Not specified",
             brand_values=brand_values,
             product_description=product_description,
-            olfactory_pyramid=olfactory_pyramid or "Da definire",
+            olfactory_pyramid=olfactory_pyramid or "To be defined",
             keywords=keywords or ""
         )
 
@@ -105,36 +105,36 @@ class GradioInterface:
             gr.HTML("""
             <div class="main-header">
                 <h1>🌸 Moellhausen Instagram Prompt Generator</h1>
-                <p><em>Sistema RAG per generare prompt ottimali mantenendo il brand voice</em></p>
+                <p><em>RAG System for Prompt Generation</em></p>
             </div>
             """)
 
             # === PAGINA 1: CARICAMENTO DOCUMENTI ===
-            with gr.Tab("📚 Caricamento Documenti"):
-                gr.HTML('<h2 class="section-header">📚 Gestione Database Post Instagram</h2>')
+            with gr.Tab("📚 Document Loading"):
+                gr.HTML('<h2 class="section-header">📚 Instagram Posts Database Management</h2>')
 
                 gr.HTML("""
                 <div class="info-box">
-                    <strong>📋 Istruzioni:</strong><br>
-                    1. Carica i post Instagram esistenti uno alla volta<br>
-                    2. I post devono essere in formato testo/markdown<br>
-                    3. Ogni post verrà indicizzato nel database per l'analisi del brand voice<br>
-                    4. Almeno 3-5 post sono consigliati per risultati ottimali
+                    <strong>📋 Instructions:</strong><br>
+                    1. Upload existing Instagram posts one at a time<br>
+                    2. Posts must be in text/markdown format.<br>
+                    3. Each post will be indexed in the database for brand voice analysis.<br>
+                    4. At least 3-5 posts are recommended for optimal results.
                 </div>
                 """)
 
                 with gr.Row():
                     with gr.Column(scale=2):
-                        gr.HTML('<h3>📄 Caricamento File</h3>')
+                        gr.HTML('<h3>📄 File Loading</h3>')
 
                         file_upload = gr.File(
-                            label="Seleziona file post Instagram (.txt, .md)", 
+                            label="Select Instagram post file (.txt, .md)",
                             file_types=[".txt", ".md"],
                             file_count="single"
                         )
 
                         post_name_input = gr.Textbox(
-                            label="Nome del Post (opzionale)",
+                            label="Post name (optional)",
                             placeholder="es: King_Narmar_Nilafar",
                             lines=1
                         )
@@ -146,35 +146,35 @@ class GradioInterface:
                         )
 
                     with gr.Column(scale=3):
-                        gr.HTML('<h3>👁️ Anteprima Contenuto</h3>')
+                        gr.HTML('<h3>👁️ Content Preview</h3>')
 
                         content_preview = gr.Textbox(
-                            label="Anteprima del contenuto caricato",
+                            label="Preview of loaded content",
                             lines=10,
                             interactive=False
                         )
 
                         content_manual = gr.Textbox(
-                            label="Oppure incolla il contenuto manualmente",
+                            label="Or paste the content manually",
                             lines=10,
-                            placeholder="Incolla qui il testo del post Instagram..."
+                            placeholder="Paste the text of your Instagram post here..."
                         )
 
                 with gr.Row():
-                    add_button = gr.Button("➕ Aggiungi al Database", variant="primary", size="large")
-                    clear_button = gr.Button("🗑️ Pulisci Campi", variant="secondary")
+                    add_button = gr.Button("➕ Add to Database", variant="primary", size="large")
+                    clear_button = gr.Button("🗑️ Clear", variant="secondary")
 
                 with gr.Row():
                     with gr.Column():
                         add_status = gr.Textbox(
-                            label="Risultato Aggiunta", 
+                            label="Result",
                             interactive=False,
                             lines=2
                         )
 
                     with gr.Column():
                         db_stats = gr.Textbox(
-                            label="Statistiche Database",
+                            label="Database statistics",
                             interactive=False, 
                             lines=4,
                             value=self.rag_system.get_collection_stats()
