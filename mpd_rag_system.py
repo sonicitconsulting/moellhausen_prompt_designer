@@ -12,6 +12,7 @@ from datetime import datetime
 import pandas as pd
 
 from chromadb.utils.embedding_functions import OllamaEmbeddingFunction
+from gradio.themes.builder_app import variables
 
 from  mpd_config import Config
 
@@ -27,7 +28,9 @@ class InstagramPromptGenerator:
         collection_name: str = Config.COLLECTION_NAME,
         embedding_model: str = Config.EMBEDDING_MODEL,
         analysis_model: str = Config.ANALYSIS_MODEL,
-        ollama_host: str = Config.OLLAMA_HOST
+        ollama_host: str = Config.OLLAMA_HOST,
+        analysis_prompt: str = Config.ANALYSIS_PROMPT_FILE,
+        generation_prompt: str = Config.GENERATION_PROMPT_FILE,
     ):
 
         self.chroma_path = chroma_path
@@ -35,6 +38,8 @@ class InstagramPromptGenerator:
         self.embedding_model = embedding_model
         self.analysis_model = analysis_model
         self.ollama_host = ollama_host
+        self.analysis_prompt = analysis_prompt
+        self.generation_prompt = generation_prompt
 
         # Configura client Ollama (per server remoto)
         if ollama_host != "http://localhost:11434":
@@ -205,35 +210,14 @@ class InstagramPromptGenerator:
 
         # Combina tutti i post per l'analisi
         combined_text = "\n\n---POST SEPARATOR---\n\n".join([post['document'] for post in posts])
+        combined_text = combined_text[:3000]
 
-        analysis_prompt = f"""Sei un esperto di marketing e brand communication italiana. Analizza questi post Instagram di Moellhausen (brand di profumi luxury italiano) ed estrai:
+        analysis_prompt_variables = {'combined_text': combined_text}
 
-1. **TONE OF VOICE:**
-   - Registro linguistico (formale/informale)
-   - Stile comunicativo
-   - Personalità del brand
-
-2. **STRUTTURA NARRATIVA:**
-   - Schema compositivo ricorrente
-   - Elementi sempre presenti  
-   - Sequenza logica delle informazioni
-
-3. **LESSICO E TERMINOLOGIA:**
-   - Parole chiave ricorrenti
-   - Terminologia tecnica specifica
-   - Aggettivi caratteristici
-
-4. **ELEMENTI STILISTICI:**
-   - Uso di metafore o figure retoriche
-   - Riferimenti culturali/storici
-   - Approccio descrittivo
-
-POST DA ANALIZZARE:
-{combined_text[:3000]}
-
-Rispondi in italiano con un'analisi dettagliata e strutturata, focalizzandoti sui pattern che si ripetono e che caratterizzano il brand."""
+        analysis_prompt = self.load_prompt(self.analysis_prompt)
 
         try:
+            analysis_prompt = analysis_prompt.format(**analysis_prompt_variables)
             client = ollama.Client(host=self.ollama_host)
             response = client.generate(
                 model=self.analysis_model,
@@ -269,51 +253,31 @@ Rispondi in italiano con un'analisi dettagliata e strutturata, focalizzandoti su
             if not similar_posts:
                 return "❌ **Errore:** Impossibile trovare post simili nel database."
 
+            post_examples = {chr(10).join(
+                [f"ESEMPIO {i + 1}:{chr(10)}{post['document'][:1000]}..." for i, post in enumerate(similar_posts[:2])])}
+
             # Analizza il brand voice dei post simili
             brand_analysis = self.analyze_brand_voice(similar_posts)
 
+            generation_prompt_variables = {"product_name": product_name,
+                                "perfumer_name": perfumer_name,
+                                "brand_values": brand_values,
+                                "product_description": product_description,
+                                "olfactory_pyramid": olfactory_pyramid,
+                                "keywords": keywords,
+                                "brand_analysis": brand_analysis,
+                                "post_examples": post_examples}
+
+
+
             # Crea il prompt ottimizzato
-            prompt_generation = f"""Sei un esperto prompt engineer specializzato in marketing luxury e comunicazione di brand. 
-
-Devi creare un PROMPT PERFETTO per un LLM commerciale (come GPT-4, Claude, etc.) che generi un post Instagram per Moellhausen mantenendo ESATTAMENTE il loro stile unico.
-
-**INFORMAZIONI SUL NUOVO PRODOTTO:**
-- Nome prodotto: {product_name}
-- Profumiere: {perfumer_name}
-- Valori brand da evidenziare: {brand_values}
-- Descrizione grezza del profumo: {product_description}
-- Piramide olfattiva: {olfactory_pyramid}
-- Parole chiave obbligatorie: {keywords}
-
-**ANALISI DEL BRAND VOICE MOELLHAUSEN:**
-{brand_analysis}
-
-**POST DI RIFERIMENTO (esempi dello stile autentico):**
-{chr(10).join([f"ESEMPIO {i+1}:{chr(10)}{post['document'][:1000]}..." for i, post in enumerate(similar_posts[:2])])}
-
-**COMPITO:**
-Crea un prompt dettagliato, strutturato e completo che, quando usato con un LLM commerciale, genererà un post Instagram che:
-1. Sia TASSATIVAMENTE in lingua inglese
-2. Rispetti PERFETTAMENTE la struttura markdown dei post esistenti
-3. Mantenga il tone of voice sofisticato e poetico di Moellhausen
-4. Integri tutte le informazioni del nuovo prodotto in modo organico
-5. Sia indistinguibile dai post autentici del brand
-
-
-Il prompt deve essere autosufficiente e includere:
-- Definizione chiara del ruolo per l'LLM
-- Struttura ESATTA da seguire (con markdown)
-- Tone of voice specifico con esempi
-- Template con placeholder
-- Vincoli e requisiti stilistici
-- Esempi di lessico appropriato
-
-Genera SOLO il prompt ottimizzato, pronto per essere copiato e usato direttamente con un LLM commerciale."""
+            generation_prompt = self.load_prompt(self.generation_prompt)
+            generation_prompt = generation_prompt.format(**generation_prompt_variables)
 
             client = ollama.Client(host=self.ollama_host)
             response = client.generate(
                 model=self.analysis_model,
-                prompt=prompt_generation,
+                prompt=generation_prompt,
                 options={'temperature': 0.4, 'num_predict': 2000}
             )
 
@@ -321,3 +285,9 @@ Genera SOLO il prompt ottimizzato, pronto per essere copiato e usato direttament
 
         except Exception as e:
             return f"❌ **Errore nella generazione del prompt:** {str(e)}\n\nVerifica che Ollama sia in esecuzione e che il modello '{self.analysis_model}' sia disponibile."
+
+    def load_prompt(self, file_path: str) -> str:
+        """Legge il prompt da file e sostituisce i placeholder."""
+        with open(file_path, 'r', encoding='utf-8') as f:
+            prompt_template = f.read()
+        return prompt_template

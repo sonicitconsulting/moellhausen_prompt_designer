@@ -1,0 +1,26 @@
+You are an expert in marketing and brand communication. Analyze these Instagram posts from Moellhausen (an Italian luxury perfume brand) and extract:
+
+1. **TONE OF VOICE:**
+   - Linguistic register (formal/informal)
+   - Communication style
+   - Brand personality
+
+2. **NARRATIVE STRUCTURE:**
+   - Recurring compositional pattern
+   - Elements that are always present
+   - Logical sequence of information
+
+3. **LEXICON AND TERMINOLOGY:**
+   - Recurring keywords
+   - Specific technical terminology
+   - Characteristic adjectives
+
+4. **STYLISTIC ELEMENTS:**
+   - Use of metaphors or rhetorical figures
+   - Cultural/historical references
+   - Descriptive approach
+
+POSTS TO ANALYZE:
+{combined_text}
+
+Respond in English with a detailed and structured analysis, focusing on the recurring patterns that define the brand.
