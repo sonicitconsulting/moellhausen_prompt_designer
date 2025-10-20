@@ -31,6 +31,7 @@ class InstagramPromptGenerator:
         ollama_host: str = Config.OLLAMA_HOST,
         analysis_prompt: str = Config.ANALYSIS_PROMPT_FILE,
         generation_prompt: str = Config.GENERATION_PROMPT_FILE,
+        post_generation_model: str = Config.POST_MODEL
     ):
 
         self.chroma_path = chroma_path
@@ -40,6 +41,7 @@ class InstagramPromptGenerator:
         self.ollama_host = ollama_host
         self.analysis_prompt = analysis_prompt
         self.generation_prompt = generation_prompt
+        self.post_generation_model = post_generation_model
 
         # Configura client Ollama (per server remoto)
         if ollama_host != "http://localhost:11434":
@@ -163,10 +165,10 @@ class InstagramPromptGenerator:
             titles = [meta.get('title', 'N/A')[:30] + '...' for meta in sample['metadatas']]
 
             stats = f"""📊 **Database statistics:**
-- **Indexed posts:** {count}
-- **Post examples:** {', '.join(titles)}
-- **Database path:** {self.chroma_path}
-"""
+                    - **Indexed posts:** {count}
+                    - **Post examples:** {', '.join(titles)}
+                    - **Database path:** {self.chroma_path}
+                    """
             return stats
 
         except Exception as e:
@@ -285,6 +287,22 @@ class InstagramPromptGenerator:
 
         except Exception as e:
             return f"❌ **Error generating prompt:** {str(e)}"
+
+    def get_post_from_llm(self, prompt):
+
+        try:
+            client = ollama.Client(host=self.ollama_host)
+            response = client.generate(
+                model=self.post_generation_model,
+                prompt=prompt,
+                options={'temperature': 0.3}
+            )
+
+            return response['response']
+
+        except Exception as e:
+            return f"❌ Error in retrieving post: {str(e)}"
+
 
     def load_prompt(self, file_path: str) -> str:
         """Legge il prompt da file e sostituisce i placeholder."""

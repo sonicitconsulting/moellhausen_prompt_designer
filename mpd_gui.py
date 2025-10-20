@@ -3,6 +3,9 @@
 
 import gradio as gr
 import os
+
+from sympy import resultant
+
 from mpd_rag_system import InstagramPromptGenerator
 from mpd_config import Config
 
@@ -83,6 +86,16 @@ class GradioInterface:
 
         return result
 
+    def get_post_from_llm(self, prompt):
+
+        if not all([prompt.strip()]):
+            return "❌ **Error:** Please get a valid prompt first"
+
+        result = self.rag_system.get_post_from_llm(prompt=prompt)
+
+        return result
+
+
     def on_file_upload(self, file, post_name):
         status, preview, full_content = self.process_uploaded_file(file, post_name)
         return status, preview, full_content  # Il campo manuale ora riceve il testo INTEGRALE
@@ -114,7 +127,7 @@ class GradioInterface:
                 gr.HTML('<h2 class="section-header">📚 Instagram Posts Database Management</h2>')
 
                 gr.HTML("""
-                <div class="info-box">
+                <div class="info-box" style="background-color: #000000;">
                     <strong>📋 Instructions:</strong><br>
                     1. Upload existing Instagram posts one at a time<br>
                     2. Posts must be in text/markdown format.<br>
@@ -203,7 +216,7 @@ class GradioInterface:
                 gr.HTML('<h2 class="section-header">✨ Optimized Prompt Generator</h2>')
 
                 gr.HTML("""
-                <div class="info-box">
+                <div class="info-box"  style="background-color: #000000;">
                     <strong>🎯 Howto:</strong><br>
                     Enter the details of the new product and get a perfect prompt for commercial LLMs 
                     (GPT-4, Claude, etc.) that will generate an Instagram post in perfect Moellhausen style.
@@ -255,7 +268,7 @@ class GradioInterface:
 
                 generate_button = gr.Button("🚀 Generate Optimised Prompt", variant="primary", size="large")
 
-                gr.HTML('<h3>📋 Prompt Generato</h3>')
+                gr.HTML('<h3>📋 Prompt Generator</h3>')
                 prompt_output = gr.Textbox(
                     label="Optimised prompt for commercial LLM",
                     lines=20,
@@ -263,12 +276,30 @@ class GradioInterface:
                     show_copy_button=True
                 )
 
+
+                get_post_button = gr.Button("🚀 Get Post from Optimized Prompt", variant="primary", size="large")
+
+                gr.HTML('<h3>📋 Post</h3>')
+                post_output = gr.Textbox(
+                    label="Post From LLM",
+                    lines=20,
+                    interactive=True,  # Permette di copiare facilmente
+                    show_copy_button=True
+                )
+
                 # Eventi pagina 2
+
                 generate_button.click(
                     fn=self.generate_prompt,
-                    inputs=[product_name, perfumer_name, brand_values, 
+                    inputs=[product_name, perfumer_name, brand_values,
                            product_description, olfactory_pyramid, keywords],
                     outputs=prompt_output
+                )
+
+                get_post_button.click(
+                    fn=self.get_post_from_llm,
+                    inputs=[prompt_output],
+                    outputs=post_output
                 )
 
             # Footer
