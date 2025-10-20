@@ -199,65 +199,65 @@ class GradioInterface:
                 )
 
             # === PAGINA 2: GENERAZIONE PROMPT ===
-            with gr.Tab("✨ Generazione Prompt"):
-                gr.HTML('<h2 class="section-header">✨ Generatore Prompt Ottimizzato</h2>')
+            with gr.Tab("✨ Prompt generator"):
+                gr.HTML('<h2 class="section-header">✨ Optimized Prompt Generator</h2>')
 
                 gr.HTML("""
                 <div class="info-box">
-                    <strong>🎯 Funzionalità:</strong><br>
-                    Inserisci i dettagli del nuovo prodotto e ottieni un prompt perfetto per LLM commerciali 
-                    (GPT-4, Claude, etc.) che genererà un post Instagram nel perfetto stile Moellhausen.
+                    <strong>🎯 Howto:</strong><br>
+                    Enter the details of the new product and get a perfect prompt for commercial LLMs 
+                    (GPT-4, Claude, etc.) that will generate an Instagram post in perfect Moellhausen style.
                 </div>
                 """)
 
                 with gr.Row():
                     with gr.Column():
-                        gr.HTML('<h3>🏷️ Informazioni Prodotto</h3>')
+                        gr.HTML('<h3>🏷️ Product Informations</h3>')
 
                         product_name = gr.Textbox(
-                            label="Nome Prodotto *",
-                            placeholder="es: GOLDEN SUNSET BY AURORA",
+                            label="Product Name *",
+                            placeholder="e.g.: GOLDEN SUNSET BY AURORA",
                             lines=1
                         )
 
                         perfumer_name = gr.Textbox(
-                            label="Nome Profumiere",
-                            placeholder="es: Anna Chiara Di Trolio",
+                            label="Perfumer's name",
+                            placeholder="e.g.: Anna Chiara Di Trolio",
                             lines=1
                         )
 
                         brand_values = gr.Textbox(
-                            label="Valori Brand da Evidenziare *", 
-                            placeholder="es: craftsmanship, scientific precision, contemporary luxury",
+                            label="Brand Values to Highlight *",
+                            placeholder="e.g.: craftsmanship, scientific precision, contemporary luxury",
                             lines=2
                         )
 
                         keywords = gr.Textbox(
-                            label="Parole Chiave Obbligatorie",
-                            placeholder="es: eleganza, raffinatezza, unicità",
+                            label="Mandatory Keywords",
+                            placeholder="es: elegance, sophistication, uniqueness",
                             lines=2
                         )
 
                     with gr.Column():
-                        gr.HTML('<h3>🌺 Descrizione Prodotto</h3>')
+                        gr.HTML('<h3>🌺 Product Description</h3>')
 
                         product_description = gr.Textbox(
-                            label="Descrizione Grezza del Profumo *",
-                            placeholder="Descrivi il profumo, l'ispirazione, la storia...",
+                            label="Rough description of the fragrance *",
+                            placeholder="Describe the fragrance, the inspiration, the story...",
                             lines=6
                         )
 
                         olfactory_pyramid = gr.Textbox(
-                            label="Piramide Olfattiva",
+                            label="Olfactory Pyramid",
                             placeholder="Top: ... \nHeart: ... \nBase: ...",
                             lines=4
                         )
 
-                generate_button = gr.Button("🚀 Genera Prompt Ottimizzato", variant="primary", size="large")
+                generate_button = gr.Button("🚀 Generate Optimised Prompt", variant="primary", size="large")
 
                 gr.HTML('<h3>📋 Prompt Generato</h3>')
                 prompt_output = gr.Textbox(
-                    label="Prompt ottimizzato per LLM commerciale",
+                    label="Optimised prompt for commercial LLM",
                     lines=20,
                     interactive=True,  # Permette di copiare facilmente
                     show_copy_button=True
