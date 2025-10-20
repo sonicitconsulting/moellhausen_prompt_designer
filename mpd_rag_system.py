@@ -60,9 +60,9 @@ class InstagramPromptGenerator:
                 name=self.collection_name,
                 embedding_function=embedding_func
             )
-            print(f"Collection '{self.collection_name}' pronta con embedding via Ollama.\nModel: {Config.EMBEDDING_MODEL}")
+            print(f"Collection '{self.collection_name}' ready to be embedded via Ollama.\nModel: {Config.EMBEDDING_MODEL}")
         except Exception as e:
-            print(f"Errore nella creazione/recupero collection: {e}")
+            print(f"Error during collection creation/retrieve: {e}")
             raise
 
     def extract_post_structure(self, post_text: str) -> Dict[str, str]:
@@ -144,10 +144,10 @@ class InstagramPromptGenerator:
                 ids=[post_id]
             )
 
-            return f"✅ Post '{structure['title'][:50]}...' aggiunto con successo (ID: {post_id})"
+            return f"✅ Successfully added post '{structure['title'][:50]}...' (ID: {post_id})"
 
         except Exception as e:
-            return f"❌ Errore nell'aggiungere il post: {str(e)}"
+            return f"❌ Error adding post: {str(e)}"
 
     def get_collection_stats(self) -> str:
         """
@@ -156,21 +156,21 @@ class InstagramPromptGenerator:
         try:
             count = self.collection.count()
             if count == 0:
-                return "📊 Database vuoto - nessun post indicizzato"
+                return "📊 Empty database - No indexed post"
 
             # Prova a ottenere alcuni metadati per le statistiche
             sample = self.collection.get(limit=min(count, 5))
             titles = [meta.get('title', 'N/A')[:30] + '...' for meta in sample['metadatas']]
 
-            stats = f"""📊 **Statistiche Database:**
-- **Post indicizzati:** {count}
-- **Esempi di post:** {', '.join(titles)}
+            stats = f"""📊 **Database statistics:**
+- **Indexed posts:** {count}
+- **Post examples:** {', '.join(titles)}
 - **Database path:** {self.chroma_path}
 """
             return stats
 
         except Exception as e:
-            return f"❌ Errore nel calcolare le statistiche: {str(e)}"
+            return f"❌ Error in calculating statistics: {str(e)}"
 
     def get_similar_posts(self, query: str, n_results: int = 3) -> List[Dict]:
         """
@@ -198,7 +198,7 @@ class InstagramPromptGenerator:
             return similar_posts
 
         except Exception as e:
-            print(f"Errore nel recuperare post simili: {str(e)}")
+            print(f"Error in retrieving similar posts: {str(e)}")
             return []
 
     def analyze_brand_voice(self, posts: List[Dict]) -> str:
@@ -206,7 +206,7 @@ class InstagramPromptGenerator:
         Analizza il tone of voice e le caratteristiche dei post usando Ollama
         """
         if not posts:
-            return "Nessun post disponibile per l'analisi"
+            return "No post available for analysis"
 
         # Combina tutti i post per l'analisi
         combined_text = "\n\n---POST SEPARATOR---\n\n".join([post['document'] for post in posts])
@@ -228,7 +228,7 @@ class InstagramPromptGenerator:
             return response['response']
 
         except Exception as e:
-            return f"❌ Errore nell'analisi del brand voice: {str(e)}\n\nVerifica che Ollama sia in esecuzione e che il modello '{self.analysis_model}' sia disponibile."
+            return f"❌ Error in brand voice analysis: {str(e)}"
 
     def generate_optimized_prompt(self, 
                                 product_name: str,
@@ -244,14 +244,14 @@ class InstagramPromptGenerator:
             # Verifica che ci siano dati nel database
             count = self.collection.count()
             if count == 0:
-                return "❌ **Errore:** Nessun post nel database. Carica prima alcuni post di esempio nella sezione 'Caricamento Documenti'."
+                return "❌ **Error:** No posts in the database. Please upload some sample posts first in the “Document Upload” section."
 
             # Recupera post simili basati su prodotto e valori
             query = f"{product_name} {brand_values} {product_description}"
             similar_posts = self.get_similar_posts(query, n_results=3)
 
             if not similar_posts:
-                return "❌ **Errore:** Impossibile trovare post simili nel database."
+                return "❌ **Error:** Unable to find similar posts in the database."
 
             post_examples = {chr(10).join(
                 [f"ESEMPIO {i + 1}:{chr(10)}{post['document'][:1000]}..." for i, post in enumerate(similar_posts[:2])])}
@@ -284,7 +284,7 @@ class InstagramPromptGenerator:
             return response['response']
 
         except Exception as e:
-            return f"❌ **Errore nella generazione del prompt:** {str(e)}\n\nVerifica che Ollama sia in esecuzione e che il modello '{self.analysis_model}' sia disponibile."
+            return f"❌ **Error generating prompt:** {str(e)}"
 
     def load_prompt(self, file_path: str) -> str:
         """Legge il prompt da file e sostituisce i placeholder."""
