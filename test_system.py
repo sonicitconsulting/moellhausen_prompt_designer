@@ -5,7 +5,7 @@ Script di test per verificare il funzionamento del sistema RAG Instagram
 
 import os
 import sys
-from instagram_rag_system import InstagramPromptGenerator
+from mpd_rag_system import InstagramPromptGenerator
 
 def test_system():
     """

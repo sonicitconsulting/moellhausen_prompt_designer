@@ -2,12 +2,12 @@
 # Due pagine: 1) Caricamento Documenti  2) Generazione Prompt
 
 import gradio as gr
-import os
 
-from sympy import resultant
 
 from mpd_rag_system import InstagramPromptGenerator
 from mpd_config import Config
+
+import  mpd_support_functions as support
 
 class GradioInterface:
     """
@@ -100,6 +100,7 @@ class GradioInterface:
         status, preview, full_content = self.process_uploaded_file(file, post_name)
         return status, preview, full_content  # Il campo manuale ora riceve il testo INTEGRALE
 
+
     def create_interface(self):
         """
         Crea l'interfaccia Gradio con due pagine
@@ -115,9 +116,12 @@ class GradioInterface:
 
         with gr.Blocks(css=custom_css, title="Moellhausen Instagram Prompt Generator") as interface:
 
+            logo_img = support.load_image("./static/images/logo.png")
+
+            gr.HTML(f'<div style="display:flex; justify-content:center;"><img src="{logo_img}" width="400" /></div>')
             gr.HTML("""
             <div class="main-header">
-                <h1>🌸 Moellhausen Instagram Prompt Generator</h1>
+                <h1>Instagram Prompt Generator</h1>
                 <p><em>RAG System for Prompt Generation</em></p>
             </div>
             """)
