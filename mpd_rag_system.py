@@ -277,8 +277,8 @@ class InstagramPromptGenerator:
 
             print(generation_prompt)
 
-            prompt = self.call_perplexity(prompt=generation_prompt)
-            '''  
+            #prompt = self.call_perplexity(prompt=generation_prompt)
+
             client = ollama.Client(host=self.ollama_host, timeout=300)
             response = client.generate(
                 model=self.analysis_model,
@@ -288,9 +288,9 @@ class InstagramPromptGenerator:
             
             
             return response['response']
-            '''
 
-            return prompt
+
+            #return prompt
         except Exception as e:
             return f"❌ **Error generating prompt:** {str(e)}"
 

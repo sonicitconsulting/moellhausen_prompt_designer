@@ -16,10 +16,10 @@ class Config:
     EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "toshk0/nomic-embed-text-v2-moe:Q6_K")
 
     # Modello per l'analisi
-    ANALYSIS_MODEL = os.getenv("ANALYSIS_MODEL", "phi3:latest")
+    ANALYSIS_MODEL = os.getenv("ANALYSIS_MODEL", "deepseek-v3.1:671b-cloud")
 
     # Modello per la generazione del post
-    POST_MODEL = os.getenv("POST_MODEL", "phi3:latest")
+    POST_MODEL = os.getenv("POST_MODEL", "deepseek-v3.1:671b-cloud")
 
     # === CONFIGURAZIONE CHROMADB ===
     # Path del database ChromaDB
