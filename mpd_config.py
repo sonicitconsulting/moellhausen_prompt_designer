@@ -52,6 +52,9 @@ class Config:
     ANALYSIS_PROMPT_FILE = os.getenv("ANALYSIS_PROMPT_FILE", "analysis_prompt.txt")
     GENERATION_PROMPT_FILE = os.getenv("GENERATION_PROMPT_FILE", "generation_prompt.txt")
 
+    PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY", "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")
+
+
     @classmethod
     def validate_config(cls):
         """

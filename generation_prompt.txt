@@ -6,7 +6,7 @@ Create a detailed, structured, and complete prompt to generate an Instagram post
 2. PERFECTLY respects the structure of existing posts, but OMIT markdown section dividers and titles. The structure of the final post is
 
     1. **Introductory Line (brand formula):**
-       A short, elegant introductory line, typically beginning with “Unique, one of a kind with Moellhausen: [PRODUCT NAME] by [Perfumer’s Brand or Name]”.
+       A short, elegant introductory line, mandatorily beginning with “Unique, one of a kind with Moellhausen: [PRODUCT NAME] by [Perfumer’s Brand or Name]”.
 
     2. **Inspirational Introduction:**
        A poetic introduction that sets the emotional tone. It should evoke imagination, atmosphere, and refined Italian artistry. Introduce the perfumer and inspiration behind the fragrance.

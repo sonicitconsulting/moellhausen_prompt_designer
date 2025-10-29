@@ -2,19 +2,16 @@
 # Integra Ollama + ChromaDB + Gradio per generare prompt ottimali
 
 import os
-import gradio as gr
+from datetime import datetime
+from typing import List, Dict
+
 import chromadb
 import ollama
-import json
-from typing import List, Dict, Optional
-import re
-from datetime import datetime
-import pandas as pd
-
 from chromadb.utils.embedding_functions import OllamaEmbeddingFunction
-from gradio.themes.builder_app import variables
 
-from  mpd_config import Config
+from mpd_config import Config
+
+from perplexity import Perplexity
 
 class InstagramPromptGenerator:
     """
@@ -31,7 +28,8 @@ class InstagramPromptGenerator:
         ollama_host: str = Config.OLLAMA_HOST,
         analysis_prompt: str = Config.ANALYSIS_PROMPT_FILE,
         generation_prompt: str = Config.GENERATION_PROMPT_FILE,
-        post_generation_model: str = Config.POST_MODEL
+        post_generation_model: str = Config.POST_MODEL,
+        perplexity_api_key: str = Config.PERPLEXITY_API_KEY
     ):
 
         self.chroma_path = chroma_path
@@ -42,6 +40,7 @@ class InstagramPromptGenerator:
         self.analysis_prompt = analysis_prompt
         self.generation_prompt = generation_prompt
         self.post_generation_model = post_generation_model
+        self.perplexity_api_key = perplexity_api_key
 
         # Configura client Ollama (per server remoto)
         if ollama_host != "http://localhost:11434":
@@ -278,15 +277,20 @@ class InstagramPromptGenerator:
 
             print(generation_prompt)
 
+            prompt = self.call_perplexity(prompt=generation_prompt)
+            '''  
             client = ollama.Client(host=self.ollama_host, timeout=300)
             response = client.generate(
                 model=self.analysis_model,
                 prompt=generation_prompt,
                 options={'temperature': 0.4, 'num_predict': 2000}
             )
-
+            
+            
             return response['response']
+            '''
 
+            return prompt
         except Exception as e:
             return f"❌ **Error generating prompt:** {str(e)}"
 
@@ -311,3 +315,18 @@ class InstagramPromptGenerator:
         with open(file_path, 'r', encoding='utf-8') as f:
             prompt_template = f.read()
         return prompt_template
+
+    def call_perplexity(self, prompt):
+
+        client = Perplexity(api_key=self.perplexity_api_key)
+
+        # Invia il prompt, ad esempio in italiano
+        response = client.chat.completions.create(
+            model="sonar",  # Puoi usare anche 'sonar-medium-chat', 'sonar-pro' ecc. se disponibili per il tuo account
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+        )
+
+        return response.choices[0].message.content
+
