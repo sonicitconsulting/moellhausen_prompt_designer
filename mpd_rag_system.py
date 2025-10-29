@@ -276,6 +276,8 @@ class InstagramPromptGenerator:
             generation_prompt = self.load_prompt(self.generation_prompt)
             generation_prompt = generation_prompt.format(**generation_prompt_variables)
 
+            print(generation_prompt)
+
             client = ollama.Client(host=self.ollama_host, timeout=300)
             response = client.generate(
                 model=self.analysis_model,

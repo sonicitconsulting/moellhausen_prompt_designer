@@ -16,10 +16,10 @@ class Config:
     EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "toshk0/nomic-embed-text-v2-moe:Q6_K")
 
     # Modello per l'analisi
-    ANALYSIS_MODEL = os.getenv("ANALYSIS_MODEL", "llama3:instruct")
+    ANALYSIS_MODEL = os.getenv("ANALYSIS_MODEL", "phi3:latest")
 
     # Modello per la generazione del post
-    POST_MODEL = os.getenv("POST_MODEL", "llama3:latest")
+    POST_MODEL = os.getenv("POST_MODEL", "phi3:latest")
 
     # === CONFIGURAZIONE CHROMADB ===
     # Path del database ChromaDB

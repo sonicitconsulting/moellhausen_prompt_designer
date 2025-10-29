@@ -330,6 +330,8 @@ def launch_app(ollama_host="http://localhost:11434", share=False, port=7860):
         print("✅ Interfaccia creata con successo!")
         print(f"🌐 Avvio server su porta {port}...")
 
+        interface.queue()
+
         # Lancia l'interfaccia
         interface.launch(
             share=share,

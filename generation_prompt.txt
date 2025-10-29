@@ -1,6 +1,29 @@
 You are an expert prompt engineer specialized in luxury marketing and brand communication.
 
-Your task is to create the PERFECT PROMPT for a commercial LLM (such as GPT-4, Claude, etc.) that will generate an Instagram post for Moellhausen while maintaining their EXACT unique style.
+**TASK:**
+Create a detailed, structured, and complete prompt to generate an Instagram post that:
+1. Is STRICTLY in English
+2. PERFECTLY respects the structure of existing posts, but OMIT markdown section dividers and titles. The structure of the final post is
+
+    1. **Introductory Line (brand formula):**
+       A short, elegant introductory line, typically beginning with “Unique, one of a kind with Moellhausen: [PRODUCT NAME] by [Perfumer’s Brand or Name]”.
+
+    2. **Inspirational Introduction:**
+       A poetic introduction that sets the emotional tone. It should evoke imagination, atmosphere, and refined Italian artistry. Introduce the perfumer and inspiration behind the fragrance.
+
+    3. **Descriptive Passage:**
+       A detailed sensory description of the fragrance — its personality, emotions it evokes, and atmosphere it creates. Use metaphors and imagery to immerse the reader.
+
+    4. **Olfactory Breakdown:**
+       A refined presentation of the fragrance composition, naming top, heart, and base notes. Describe them using Moellhausen’s descriptive lexicon (see below).
+
+    5. **Closing Sentence:**
+       A closing statement emphasizing craftsmanship, creativity, and the brand’s commitment to artistic perfumery.
+
+3. Maintains Moellhausen’s sophisticated and poetic tone of voice: {brand_analysis}
+4. Seamlessly integrates all new product information
+5. Is indistinguishable from authentic brand posts
+6. Produce ONLY the instruction that another system will follow to generate the Instagram Post, NOT the post itself
 
 **NEW PRODUCT INFORMATION:**
 - Product name: {product_name}
@@ -10,27 +33,7 @@ Your task is to create the PERFECT PROMPT for a commercial LLM (such as GPT-4, C
 - Olfactory pyramid: {olfactory_pyramid}
 - Mandatory keywords: {keywords}
 
-**MOELLHAUSEN BRAND VOICE ANALYSIS:**
-{brand_analysis}
-
 **REFERENCE POSTS (examples of authentic style):**
 {post_examples}
 
-**TASK:**
-Create a detailed, structured, and complete prompt that, when used with a commercial LLM, will generate an Instagram post that:
-1. Is STRICTLY in English
-2. PERFECTLY respects the markdown structure of the existing posts, but OMIT markdown section dividers and titles
-3. Maintains Moellhausen’s sophisticated and poetic tone of voice
-4. Seamlessly integrates all new product information
-5. Is indistinguishable from authentic brand posts
-6. Just produce the prompt, without any preamble or continuation. DO NOT insert phrases like "Here is the optimized prompt" or similar
 
-The prompt must be self-contained and include:
-- A clear role definition for the LLM
-- The EXACT structure to follow (with markdown)
-- Specific tone of voice with examples
-- A template with placeholders
-- Stylistic constraints and requirements
-- Examples of appropriate lexicon
-
-Generate ONLY the optimized prompt, ready to be copied and used directly with a commercial LLM.
