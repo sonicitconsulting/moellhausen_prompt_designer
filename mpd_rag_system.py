@@ -11,7 +11,6 @@ from chromadb.utils.embedding_functions import OllamaEmbeddingFunction
 
 from mpd_config import Config
 
-from perplexity import Perplexity
 
 class InstagramPromptGenerator:
     """
@@ -316,17 +315,4 @@ class InstagramPromptGenerator:
             prompt_template = f.read()
         return prompt_template
 
-    def call_perplexity(self, prompt):
-
-        client = Perplexity(api_key=self.perplexity_api_key)
-
-        # Invia il prompt, ad esempio in italiano
-        response = client.chat.completions.create(
-            model="sonar",  # Puoi usare anche 'sonar-medium-chat', 'sonar-pro' ecc. se disponibili per il tuo account
-            messages=[
-                {"role": "user", "content": prompt}
-            ]
-        )
-
-        return response.choices[0].message.content
 

@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+.idea/
+Dockerfile
+.gitignore
+.dockerignore
+.session
+README.md
+buildApp.sh
+*.tar
+test_system.py

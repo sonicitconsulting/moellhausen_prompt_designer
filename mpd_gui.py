@@ -336,7 +336,7 @@ def launch_app(ollama_host="http://localhost:11434", share=False, port=7860):
         interface.launch(
             share=share,
             server_port=port,
-            server_name="0.0.0.0" if share else "127.0.0.1",
+            server_name="0.0.0.0",
             show_api=False
         )
 
