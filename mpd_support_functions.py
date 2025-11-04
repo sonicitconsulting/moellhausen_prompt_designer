@@ -10,3 +10,11 @@ def load_image(image_path):
         data_url = f"data:image/png;base64,{b64}"
 
     return data_url
+
+def load_system_prompt(system_prompt_path):
+    with open(system_prompt_path, "r", encoding="utf-8") as f:
+        return f.read()
+
+def save_system_prompt(system_prompt_path, contenuto):
+    with open(system_prompt_path, "w", encoding="utf-8") as f:
+        f.write(contenuto)
