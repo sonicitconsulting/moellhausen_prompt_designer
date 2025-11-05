@@ -8,16 +8,19 @@ Create a detailed, structured, and complete prompt to generate an Instagram post
     1. **Introductory Line (brand formula):**
        A short, elegant introductory line, mandatorily beginning with “Unique, one of a kind with Moellhausen: [PRODUCT NAME] by [Perfumer’s Brand or Name]”.
 
-    2. **Inspirational Introduction:**
+    2. **Brand introduction:**
+       A brief paragraph presenting brand values to highlight.
+
+    3. **Inspirational Introduction:**
        A poetic introduction that sets the emotional tone. It should evoke imagination, atmosphere, and refined Italian artistry. Introduce the perfumer and inspiration behind the fragrance.
 
-    3. **Descriptive Passage:**
+    4. **Descriptive Passage:**
        A detailed sensory description of the fragrance — its personality, emotions it evokes, and atmosphere it creates. Use metaphors and imagery to immerse the reader.
 
-    4. **Olfactory Breakdown:**
+    5. **Olfactory Breakdown:**
        A refined presentation of the fragrance composition, naming top, heart, and base notes. Describe them using Moellhausen’s descriptive lexicon (see below).
 
-    5. **Closing Sentence:**
+    6. **Closing Sentence:**
        A closing statement emphasizing craftsmanship, creativity, and the brand’s commitment to artistic perfumery.
 
 3. Maintains Moellhausen’s sophisticated and poetic tone of voice: {brand_analysis}
