@@ -20,8 +20,10 @@ class GradioInterface:
             collection_name=Config.COLLECTION_NAME,
             embedding_model=Config.EMBEDDING_MODEL,
             analysis_model=Config.ANALYSIS_MODEL,
-            ollama_host=ollama_host
+            ollama_host=ollama_host,
         )
+
+        self.system_prompt_path = Config.GENERATION_PROMPT_FILE
 
     def process_uploaded_file(self, file, post_name):
         """
@@ -100,6 +102,14 @@ class GradioInterface:
         status, preview, full_content = self.process_uploaded_file(file, post_name)
         return status, preview, full_content  # Il campo manuale ora riceve il testo INTEGRALE
 
+    def on_tab_3_selected(self):
+        sys_prompt = support.load_system_prompt(self.system_prompt_path)
+        return sys_prompt
+
+
+    def save_sys_prompt(self, prompt):
+        support.save_system_prompt(self.system_prompt_path, prompt)
+        return
 
     def create_interface(self):
         """
@@ -305,6 +315,38 @@ class GradioInterface:
                     inputs=[prompt_output],
                     outputs=post_output
                 )
+
+            # === PAGINA 3: SYSTEM PROMPT ===
+            with gr.Tab("☠ System Prompt") as sys_prompt_tab:
+                gr.HTML('<h2 class="section-header">☠ System Prompt Management</h2>')
+
+                gr.HTML("""
+                <div class="info-box"  style="background-color: #000000;">
+                    <strong>🎯 Howto:</strong><br>
+                    Modify and save System Prompt
+                </div>
+                """)
+
+                with gr.Row():
+                    with gr.Column():
+                        gr.HTML('<h3>🏷️ System Prompt</h3>')
+
+                        system_prompt = gr.Textbox(
+                            label="System Prompt *",
+                            lines= 10,
+                            interactive=True
+                        )
+
+                        save_sys_prompt = gr.Button("🚀 Save system prompt", variant="primary", size="large")
+
+                ## Eventi pagina 3
+                sys_prompt_tab.select(self.on_tab_3_selected, inputs=None, outputs=system_prompt)
+
+                save_sys_prompt.click(self.save_sys_prompt, inputs=system_prompt, outputs=None)
+
+
+
+
 
             # Footer
             gr.HTML("""
