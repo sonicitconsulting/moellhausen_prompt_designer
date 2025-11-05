@@ -159,13 +159,16 @@ class InstagramPromptGenerator:
                 return "📊 Empty database - No indexed post"
 
             # Prova a ottenere alcuni metadati per le statistiche
-            sample = self.collection.get(limit=min(count, 5))
-            titles = [meta.get('title', 'N/A')[:30] + '...' for meta in sample['metadatas']]
+            #sample = self.collection.get(limit=min(count, 5))
+            sample = self.collection.get()
+            titles = [meta.get('title', 'N/A') + '\n' for meta in sample['metadatas']]
 
             stats = f"""📊 **Database statistics:**
-                    - **Indexed posts:** {count}
-                    - **Post examples:** {', '.join(titles)}
+                    - **Indexed documents:** {count}
                     - **Database path:** {self.chroma_path}
+                    - **Documents titles:** 
+                    
+                    {''.join(titles)}
                     """
             return stats
 
