@@ -113,7 +113,7 @@ class InstagramPromptGenerator:
 
         return sections
 
-    def add_post_to_database(self, post_text: str, post_name: str = "") -> str:
+    def add_post_to_database(self, post_text: str, post_name: str = "", document_type: str = "") -> str:
         """
         Aggiunge un singolo post al database ChromaDB
         """
@@ -134,7 +134,8 @@ class InstagramPromptGenerator:
                 'date_added': datetime.now().isoformat(),
                 'word_count': len(post_text.split()),
                 'has_olfactory_pyramid': bool(structure['olfactory_pyramid']),
-                'post_name': post_name or 'Unknown'
+                'post_name': post_name or 'Unknown',
+                'document_type': document_type
             }
 
             # Aggiungi alla collection ChromaDB
@@ -175,14 +176,15 @@ class InstagramPromptGenerator:
         except Exception as e:
             return f"❌ Error in calculating statistics: {str(e)}"
 
-    def get_similar_posts(self, query: str, n_results: int = 3) -> List[Dict]:
+    def get_similar_posts(self, query: str, n_results: int = 3, restrictions: dict = None) -> List[Dict]:
         """
         Recupera i post più simili dalla database
         """
         try:
             results = self.collection.query(
                 query_texts=[query],
-                n_results=min(n_results, self.collection.count())
+                n_results=min(n_results, self.collection.count()),
+                where= restrictions
             )
 
             similar_posts = []
@@ -252,7 +254,7 @@ class InstagramPromptGenerator:
 
             # Recupera post simili basati su prodotto e valori
             query = f"{product_name} {brand_values} {product_description}"
-            similar_posts = self.get_similar_posts(query, n_results=3)
+            similar_posts = self.get_similar_posts(query, n_results=3, restrictions={"document_type": "Post"})
 
             if not similar_posts:
                 return "❌ **Error:** Unable to find similar posts in the database."

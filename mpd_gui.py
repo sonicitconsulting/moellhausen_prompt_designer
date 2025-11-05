@@ -2,7 +2,7 @@
 # Due pagine: 1) Caricamento Documenti  2) Generazione Prompt
 
 import gradio as gr
-
+from tomlkit import document
 
 from mpd_rag_system import InstagramPromptGenerator
 from mpd_config import Config
@@ -52,7 +52,7 @@ class GradioInterface:
         except Exception as e:
             return f"❌ Errore loading file: {str(e)}", ""
 
-    def add_document_to_db(self, content, post_name):
+    def add_document_to_db(self, content, post_name, document_type):
         """
         Aggiunge un documento al database ChromaDB
         """
@@ -62,7 +62,7 @@ class GradioInterface:
         if not post_name.strip():
             post_name = f"Post_{len(content)//100}"
 
-        result = self.rag_system.add_post_to_database(content, post_name)
+        result = self.rag_system.add_post_to_database(content, post_name, document_type)
         stats = self.rag_system.get_collection_stats()
 
         return result, stats
@@ -161,7 +161,13 @@ class GradioInterface:
                             file_count="single"
                         )
 
-                        post_name_input = gr.Textbox(
+                        document_type = gr.Dropdown(
+                            choices=['Post', 'Avoid Dictionary', "Include Dictionary"],
+                            label="Document type",
+                            interactive=True
+                        )
+
+                        document_name_input = gr.Textbox(
                             label="Post name (optional)",
                             placeholder="es: King_Narmar_Nilafar",
                             lines=1
@@ -211,19 +217,19 @@ class GradioInterface:
                 # Eventi pagina 1
                 file_upload.change(
                     fn=self.on_file_upload,
-                    inputs=[file_upload, post_name_input],
+                    inputs=[file_upload, document_name_input],
                     outputs=[file_status, content_preview, content_manual]
                 )
 
                 add_button.click(
                     fn=self.add_document_to_db,
-                    inputs=[content_manual, post_name_input],
+                    inputs=[content_manual, document_name_input, document_type],
                     outputs=[add_status, db_stats]
                 )
 
                 clear_button.click(
                     fn=lambda: ("", "", "", "", None, ""),
-                    outputs=[content_manual, post_name_input, file_status, content_preview, file_upload, add_status]
+                    outputs=[content_manual, document_name_input, file_status, content_preview, file_upload, add_status]
                 )
 
             # === PAGINA 2: GENERAZIONE PROMPT ===
