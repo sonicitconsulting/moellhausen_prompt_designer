@@ -236,7 +236,8 @@ class InstagramPromptGenerator:
                                 brand_values: str,
                                 product_description: str,
                                 olfactory_pyramid: str,
-                                keywords: str) -> str:
+                                keywords: str,
+                                post_destination: str) -> str:
         """
         Genera un prompt ottimizzato per LLM commerciale
         """
@@ -266,7 +267,8 @@ class InstagramPromptGenerator:
                                 "olfactory_pyramid": olfactory_pyramid,
                                 "keywords": keywords,
                                 "brand_analysis": brand_analysis,
-                                "post_examples": post_examples}
+                                "post_examples": post_examples,
+                                "post_destination": post_destination}
 
 
 

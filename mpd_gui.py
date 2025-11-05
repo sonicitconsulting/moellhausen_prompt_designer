@@ -68,7 +68,7 @@ class GradioInterface:
         return result, stats
 
     def generate_prompt(self, product_name, perfumer_name, brand_values, 
-                       product_description, olfactory_pyramid, keywords):
+                       product_description, olfactory_pyramid, keywords, post_destination):
         """
         Genera il prompt ottimizzato per LLM commerciale
         """
@@ -83,7 +83,8 @@ class GradioInterface:
             brand_values=brand_values,
             product_description=product_description,
             olfactory_pyramid=olfactory_pyramid or "To be defined",
-            keywords=keywords or ""
+            keywords=keywords or "",
+            post_destination=post_destination
         )
 
         return result
@@ -236,6 +237,12 @@ class GradioInterface:
                     (GPT-4, Claude, etc.) that will generate an Instagram post in perfect Moellhausen style.
                 </div>
                 """)
+                with gr.Row():
+                    with gr.Column():
+                        gr.HTML('<h3>📄 Post Informations</h3>')
+                        post_destination = gr.Dropdown(label="Post destination",
+                                                       choices=["Instagram", "Linkedin", "Facebook"],
+                                                       interactive=True)
 
                 with gr.Row():
                     with gr.Column():
@@ -306,7 +313,7 @@ class GradioInterface:
                 generate_button.click(
                     fn=self.generate_prompt,
                     inputs=[product_name, perfumer_name, brand_values,
-                           product_description, olfactory_pyramid, keywords],
+                           product_description, olfactory_pyramid, keywords, post_destination],
                     outputs=prompt_output
                 )
 
