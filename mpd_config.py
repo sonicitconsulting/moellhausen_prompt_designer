@@ -43,7 +43,7 @@ class Config:
     GENERATION_TEMPERATURE = float(os.getenv("GENERATION_TEMPERATURE", "0.4"))
 
     # === LIMITI E VALIDAZIONE ===
-    # Lunghezza minima del contenuto del post (caratteri)
+    # Lunghezza minima del content del post (caratteri)
     MIN_POST_LENGTH = int(os.getenv("MIN_POST_LENGTH", "100"))
 
     # Lunghezza massima del prompt generato (caratteri)
@@ -51,6 +51,9 @@ class Config:
 
     ANALYSIS_PROMPT_FILE = os.getenv("ANALYSIS_PROMPT_FILE", "analysis_prompt.txt")
     GENERATION_PROMPT_FILE = os.getenv("GENERATION_PROMPT_FILE", "system_prompt.txt")
+
+    AVOID_DICTIONARY_FILE = os.getenv("AVOID_DICTIONARY_FILE", "avoid_dictionary.txt")
+    INCLUDE_DICTIONARY_FILE = os.getenv("INCLUDE_DICTIONARY_FILE", "include_dictionary.txt")
 
     PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY", "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")
 

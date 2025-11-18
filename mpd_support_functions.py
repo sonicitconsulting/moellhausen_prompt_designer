@@ -11,10 +11,10 @@ def load_image(image_path):
 
     return data_url
 
-def load_system_prompt(system_prompt_path):
-    with open(system_prompt_path, "r", encoding="utf-8") as f:
+def load_text_file(file_path):
+    with open(file_path, "r", encoding="utf-8") as f:
         return f.read()
 
-def save_system_prompt(system_prompt_path, contenuto):
-    with open(system_prompt_path, "w", encoding="utf-8") as f:
-        f.write(contenuto)
+def save_text_file(file_path, content):
+    with open(file_path, "w", encoding="utf-8") as f:
+        f.write(content)

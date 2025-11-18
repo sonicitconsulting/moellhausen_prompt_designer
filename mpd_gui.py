@@ -24,16 +24,18 @@ class GradioInterface:
         )
 
         self.system_prompt_path = Config.GENERATION_PROMPT_FILE
+        self.avoid_lexycon_file = Config.AVOID_DICTIONARY_FILE
+        self.include_lexycon_file = Config.INCLUDE_DICTIONARY_FILE
 
     def process_uploaded_file(self, file, post_name):
         """
-        Processa un file caricato ed estrae il contenuto
+        Processa un file caricato ed estrae il content
         """
         if file is None:
             return "❌ No file selected", "", ""
 
         try:
-            # Leggi il contenuto del file
+            # Leggi il content del file
             if hasattr(file, 'name'):
                 filepath = file.name
             else:
@@ -45,7 +47,7 @@ class GradioInterface:
             if not content.strip():
                 return "❌ File is empty", "", ""
 
-            # Mostra anteprima del contenuto
+            # Mostra anteprima del content
             preview = content[:500] + "..." if len(content) > 500 else content
             return f"✅ File loaded: {len(content)} characters", preview, content
 
@@ -104,12 +106,24 @@ class GradioInterface:
         return status, preview, full_content  # Il campo manuale ora riceve il testo INTEGRALE
 
     def on_tab_3_selected(self):
-        sys_prompt = support.load_system_prompt(self.system_prompt_path)
+        sys_prompt = support.load_text_file(self.system_prompt_path)
         return sys_prompt
 
-
     def save_sys_prompt(self, prompt):
-        support.save_system_prompt(self.system_prompt_path, prompt)
+        support.save_text_file(self.system_prompt_path, prompt)
+        return
+
+    def on_lexicon_tab_selected(self):
+        avoid_lexicon = support.load_text_file(self.avoid_lexycon_file)
+        include_lexicon = support.load_text_file(self.include_lexycon_file)
+        return avoid_lexicon, include_lexicon
+
+    def save_avoid_lexicon(self, lexicon):
+        support.save_text_file(self.avoid_lexycon_file, lexicon)
+        return
+
+    def save_include_lexicon(self, lexicon):
+        support.save_text_file(self.include_lexycon_file, lexicon)
         return
 
     def create_interface(self):
@@ -330,7 +344,7 @@ class GradioInterface:
                 )
 
             # === PAGINA 3: SYSTEM PROMPT ===
-            with gr.Tab("☠ System Prompt") as sys_prompt_tab:
+            with gr.Tab("🗒️ System Prompt") as sys_prompt_tab:
                 gr.HTML('<h2 class="section-header">☠ System Prompt Management</h2>')
 
                 gr.HTML("""
@@ -342,7 +356,7 @@ class GradioInterface:
 
                 with gr.Row():
                     with gr.Column():
-                        gr.HTML('<h3>🏷️ System Prompt</h3>')
+                        gr.HTML('<h3>🗒️ System Prompt</h3>')
 
                         system_prompt = gr.Textbox(
                             label="System Prompt *",
@@ -358,10 +372,47 @@ class GradioInterface:
                 save_sys_prompt.click(self.save_sys_prompt, inputs=system_prompt, outputs=None)
 
 
+            # === PAGINA 4: LEXICON ===
+            with gr.Tab("📖 Lexicon") as lexicon_tab:
+                gr.HTML('<h2 class="section-header">📖 Lexicon Management</h2>')
+
+                gr.HTML("""
+                <div class="info-box"  style="background-color: #000000;">
+                    <strong>🎯 Howto:</strong><br>
+                    Edit and save concepts and words to avoid or include
+                </div>
+                """)
+
+                with gr.Row():
+                    with gr.Column(scale=1):
+                        gr.HTML('<h3>❌ To be avoided</h3>')
+
+                        avoid_lexicon = gr.Textbox(
+                            label="Words and concepts to be avoided",
+                            lines= 10,
+                            interactive=True
+                        )
+
+                        save_avoid_lexicon = gr.Button("💾 Save avoid lexycon", variant="primary", size="large")
+
+                    with gr.Column(scale=1):
+                        gr.HTML('<h3>❎ To be included</h3>')
+
+                        include_lexicon = gr.Textbox(
+                            label="Words and concepts to be include",
+                            lines= 10,
+                            interactive=True
+                        )
+
+                        save_include_lexicon = gr.Button("💾 Save include lexycon", variant="primary", size="lg")
+
+                    ## Eventi pagina 4
+                    lexicon_tab.select(self.on_lexicon_tab_selected, inputs=None, outputs=[avoid_lexicon, include_lexicon])
+
+                    save_avoid_lexicon.click(self.save_avoid_lexicon, inputs=avoid_lexicon, outputs=None)
+                    save_include_lexicon.click(self.save_avoid_lexicon, inputs=include_lexicon, outputs=None)
 
 
-
-            # Footer
             gr.HTML("""
             <div style="text-align: center; margin-top: 30px; padding: 20px; border-top: 1px solid #ddd;">
                 <p><em>🤖 Powered by SoNicITConsulting | Made for Moellhausen</em></p>

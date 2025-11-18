@@ -24,9 +24,11 @@ Create a detailed, structured, and complete prompt to generate a post to be publ
        A closing statement emphasizing craftsmanship, creativity, and the brand’s commitment to artistic perfumery.
 
 3. Maintains Moellhausen’s sophisticated and poetic tone of voice: {brand_analysis}
-4. Seamlessly integrates all new product information
-5. Is indistinguishable from authentic brand posts
-6. Produce ONLY the instruction that another system will follow to generate the Instagram Post, NOT the post itself
+4. ABSOLUTELY AVOIDS using words or concepts included in the avoid list
+5. POSSIBLY uses words or concepts included in the welcome list
+6. Seamlessly integrates all new product information
+7. Is indistinguishable from authentic brand posts
+8. Produce ONLY the instruction that another system will follow to generate the Instagram Post, NOT the post itself
 
 **NEW PRODUCT INFORMATION:**
 - Product name: {product_name}
@@ -38,5 +40,11 @@ Create a detailed, structured, and complete prompt to generate a post to be publ
 
 **REFERENCE POSTS (examples of authentic style):**
 {post_examples}
+
+**AVOID LIST:**
+{avoid_lexicon}
+
+**WELCOME LIST:**
+{include_lexicon}
 
 

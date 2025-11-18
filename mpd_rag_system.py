@@ -10,6 +10,7 @@ import ollama
 from chromadb.utils.embedding_functions import OllamaEmbeddingFunction
 
 from mpd_config import Config
+import mpd_support_functions as support
 
 
 class InstagramPromptGenerator:
@@ -28,7 +29,9 @@ class InstagramPromptGenerator:
         analysis_prompt: str = Config.ANALYSIS_PROMPT_FILE,
         generation_prompt: str = Config.GENERATION_PROMPT_FILE,
         post_generation_model: str = Config.POST_MODEL,
-        perplexity_api_key: str = Config.PERPLEXITY_API_KEY
+        perplexity_api_key: str = Config.PERPLEXITY_API_KEY,
+        avoid_lexicon_file: str = Config.AVOID_DICTIONARY_FILE,
+        include_lexicon_file: str = Config.INCLUDE_DICTIONARY_FILE
     ):
 
         self.chroma_path = chroma_path
@@ -40,6 +43,8 @@ class InstagramPromptGenerator:
         self.generation_prompt = generation_prompt
         self.post_generation_model = post_generation_model
         self.perplexity_api_key = perplexity_api_key
+        self.avoid_lexicon_file = avoid_lexicon_file
+        self.include_lexicon_file = include_lexicon_file
 
         # Configura client Ollama (per server remoto)
         if ollama_host != "http://localhost:11434":
@@ -105,7 +110,7 @@ class InstagramPromptGenerator:
             elif 'TAGS' in line and line.startswith('##'):
                 current_section = 'tags'
             elif current_section and not line.startswith('#'):
-                # Aggiungi contenuto alla sezione corrente
+                # Aggiungi content alla sezione corrente
                 if sections[current_section]:
                     sections[current_section] += ' ' + line
                 else:
@@ -265,6 +270,10 @@ class InstagramPromptGenerator:
             # Analizza il brand voice dei post simili
             brand_analysis = self.analyze_brand_voice(similar_posts)
 
+            # Carica lista parole da evitare
+            avoid_lexicon = support.load_text_file(self.avoid_lexicon_file)
+            include_lexicon = support.load_text_file(self.include_lexicon_file)
+
             generation_prompt_variables = {"product_name": product_name,
                                 "perfumer_name": perfumer_name,
                                 "brand_values": brand_values,
@@ -273,9 +282,9 @@ class InstagramPromptGenerator:
                                 "keywords": keywords,
                                 "brand_analysis": brand_analysis,
                                 "post_examples": post_examples,
-                                "post_destination": post_destination}
-
-
+                                "post_destination": post_destination,
+                                "avoid_lexicon": avoid_lexicon,
+                                "include_lexicon": include_lexicon}
 
             # Crea il prompt ottimizzato
             generation_prompt = self.load_prompt(self.generation_prompt)
