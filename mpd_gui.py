@@ -209,7 +209,7 @@ class GradioInterface:
                         )
 
                 with gr.Row():
-                    add_button = gr.Button("➕ Add to Database", variant="primary", size="large")
+                    add_button = gr.Button("➕ Add to Database", variant="primary", size="lg")
                     clear_button = gr.Button("🗑️ Clear", variant="secondary")
 
                 with gr.Row():
@@ -307,7 +307,7 @@ class GradioInterface:
                             lines=4
                         )
 
-                generate_button = gr.Button("🚀 Generate Optimised Prompt", variant="primary", size="large")
+                generate_button = gr.Button("🚀 Generate Optimised Prompt", variant="primary", size="lg")
 
                 gr.HTML('<h3>📋 Prompt Generator</h3>')
                 prompt_output = gr.Textbox(
@@ -318,7 +318,7 @@ class GradioInterface:
                 )
 
 
-                get_post_button = gr.Button("🚀 Get Post from Optimized Prompt", variant="primary", size="large")
+                get_post_button = gr.Button("🚀 Get Post from Optimized Prompt", variant="primary", size="lg")
 
                 gr.HTML('<h3>📋 Post</h3>')
                 post_output = gr.Textbox(
@@ -364,7 +364,7 @@ class GradioInterface:
                             interactive=True
                         )
 
-                        save_sys_prompt = gr.Button("🚀 Save system prompt", variant="primary", size="large")
+                        save_sys_prompt = gr.Button("💾 Save system prompt", variant="primary", size="lg")
 
                 ## Eventi pagina 3
                 sys_prompt_tab.select(self.on_tab_3_selected, inputs=None, outputs=system_prompt)
@@ -393,7 +393,7 @@ class GradioInterface:
                             interactive=True
                         )
 
-                        save_avoid_lexicon = gr.Button("💾 Save avoid lexycon", variant="primary", size="large")
+                        save_avoid_lexicon = gr.Button("💾 Save avoid lexicon", variant="primary", size="lg")
 
                     with gr.Column(scale=1):
                         gr.HTML('<h3>❎ To be included</h3>')
