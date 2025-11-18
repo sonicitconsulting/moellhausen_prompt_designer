@@ -399,12 +399,12 @@ class GradioInterface:
                         gr.HTML('<h3>❎ To be included</h3>')
 
                         include_lexicon = gr.Textbox(
-                            label="Words and concepts to be include",
+                            label="Words and concepts to be included",
                             lines= 10,
                             interactive=True
                         )
 
-                        save_include_lexicon = gr.Button("💾 Save include lexycon", variant="primary", size="lg")
+                        save_include_lexicon = gr.Button("💾 Save include lexicon", variant="primary", size="lg")
 
                     ## Eventi pagina 4
                     lexicon_tab.select(self.on_lexicon_tab_selected, inputs=None, outputs=[avoid_lexicon, include_lexicon])
