@@ -161,8 +161,48 @@ class GradioInterface:
                     1. Upload existing Instagram posts one at a time<br>
                     2. Posts must be in text/markdown format.<br>
                     3. Each post will be indexed in the database for brand voice analysis.<br>
-                    4. At least 3-5 posts are recommended for optimal results.
+                    4. At least 3-5 posts are recommended for optimal results.<br>
+                    5. Please format post with correct separators:
+                    
+                    <br>
+                    <br>
+                    <div style="margin-left: 32px;">
+                        # Unique, one of a kind with Moellhausen: Utopia by Exceed <br>
+
+                        ## Brand Values <br>
+                        At Moellhausen, the pursuit of “olfactory beauty” is a daily endeavor that brings together people 
+                        with different roles and responsibilities, working closely in harmony. 
+                        A contagious sense of joy spreads when a goal is achieved and beauty reveals itself in all 
+                        its power. <br>
+                        
+                        ## Introduction <br>
+                        This is exactly what happened when perfumer Michelle Moellhausen completed UTOPIA, 
+                        the women’s fragrance by EXCEED, in 2024. The combination of fruity, floral, and musky 
+                        notes results in a fragrance that is incredibly lively and joyful, with an olfactory bouquet 
+                        that conjures up images of tropical gardens, exotic cocktails, and carefree moments.<br>
+                        
+                        ## Description<br>
+                        The top notes are sparkling and citrusy, thanks to grapefruit and orange, 
+                        while plum and passion fruit add a sweet, exotic twist.<br>
+                        
+                        The heart of the fragrance is light and floral, with lotus flower and water lily evoking aquatic
+                         imagery of lakes and ponds. Raspberry adds a fresh and pungent fruity touch.<br>
+                        
+                        The base notes are warm and enveloping: sandalwood and white musk create a sensual, 
+                        comforting base, while amber notes bring a hint of sweetness and vibrant passion.<br>
+                        
+                        ## Closing<br>
+                        With Moellhausen, creativity always aligns with the original spirit of its clients 
+                        and the refined taste of those who wear the most sophisticated fragrances.<br>
+                        
+                        ## OLFACTORY PYRAMID <br>
+                        (FRUITY – FLORAL – MUSKY) <br>
+                        TOP NOTES: grapefruit, plum, orange, passion fruit, pineapple <br>
+                        MIDDLE NOTES: lotus flower, water lily, floral notes, raspberry <br>
+                        BASE NOTES: sandalwood, white musk, amber notes  <br>              
+                    </div>
                 </div>
+                    
                 """)
 
                 with gr.Row():
